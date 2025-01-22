@@ -23,6 +23,8 @@ class Player():
         self.numofgems = 0
         self.health = 10
 
+        self.holding = False
+
     def collidelist(self, objects):
         """Delegar collidelist para o Actor interno."""
         return self.image.collidelist(objects)
@@ -51,7 +53,8 @@ class Player():
         self.x += self.direction * self.velocity_x
         self.image.x = self.x  # Atualizar posição do Actor
 
-        platforms = get_platforms() # test
+        platforms = get_platforms() 
+        gems = get_gems()
 
         ## X collision with platforms
         if self.collidelist(platforms) != -1 and self.direction != 0:
@@ -102,10 +105,12 @@ class Player():
                     gems.remove(gem)
                     self.numofgems += 1
                     print(self.numofgems)
+                    self.holding = True
 
-
+        #print(self.image.midtop)
         self.y = self.image.y  # Atualizar posição
         self.x = self.image.x  # Atualizar posição
+
 
 class Enemy():
 
@@ -179,6 +184,7 @@ class Enemy():
                     player.numofgems -= 1
                     self.currentgems += 1
                     print("peguei a gema kkkkk")
+                    player.holding = False
                     print(player.numofgems)
                 else:
                     print("ATTACK")
@@ -206,3 +212,26 @@ class Enemy():
             if self.image.x >= self.start_x + self.patrol_range or self.image.x <= self.start_x:
                 self.waiting = True  # Entra no estado de espera
                 self.last_wait_time = time.time()  # Marca o tempo da espera
+
+class BigGem():
+    
+    def __init__(self, x, y):
+        self.image = Actor('tile_0091')
+        self.image.midbottom = ((x, y))
+        self.x = x
+        self.y = y
+        # player variables
+        
+    def draw(self):
+        """Delegar o método draw para o Actor interno."""
+        self.image.draw()
+
+    def update(self, player):
+        #self.image.midbottom = ((player.midbottom[0], player.midbottom[0]))
+
+        self.x = player.x
+        self.y = player.y
+        
+        self.image.x = self.x
+        self.image.bottom = player.image.top
+

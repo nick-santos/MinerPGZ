@@ -1,10 +1,8 @@
-
 import pgzrun # import da biblioteca pygame zero
-from pgzero.actor import Actor, POS_TOPLEFT, ANCHOR_CENTER, transform_anchor
 from platformer import *
 
 from config import *
-from objects import Player, Enemy
+from objects import Player, Enemy, BigGem
 
 def load_scene(scene_name):
     global background, platforms, gems
@@ -13,7 +11,8 @@ def load_scene(scene_name):
     platforms = scene["platforms"]
     gems = scene.get("gems", [])
 
-    update_platforms(scene["platforms"]) # test
+    update_platforms(platforms, gems)
+
     
 def load_objects(scene_name):
     global player, enemies
@@ -35,10 +34,12 @@ current_scene = "level1scene0"  # Começo do level 1
 load_scene(current_scene)# Carrega a cena inicial4
 load_objects(current_scene)
 
+big_gem = BigGem(player.x, player.y)
+
 
 def draw():
     screen.clear()
-    
+   
     if background:
         for tile in background:
             tile.draw()
@@ -61,6 +62,11 @@ def draw():
 
     if player.alive:
         player.draw()
+
+    if player.holding:
+        big_gem.draw()
+    
+
     
     # game messages
     if over:
@@ -79,6 +85,9 @@ def update():
     # Verificar troca de cena
     if player_reached_goal():
         change_scene("level1scene1")
+
+
+    big_gem.update(player)
 
 
 pgzrun.go()

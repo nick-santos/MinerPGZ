@@ -18,10 +18,13 @@ scenes = {
     "level1scene1": {
         "background": build("map/1_001_Background.csv", TILE_SIZE),
         "platforms": build("map/1_001_Platforms.csv", TILE_SIZE),
+        "gems": build("map/1_001_Gems.csv", TILE_SIZE),
         "player_start": (TILE_SIZE * 1.5, HEIGHT - (TILE_SIZE * 1)),
         "enemies": [(TILE_SIZE * 12, HEIGHT - (TILE_SIZE * 1))]
     }
 }
+
+
 
 ## Game variables
 over = False
@@ -32,13 +35,18 @@ gems = []
 
 # config_data = {}
 
-def update_platforms(test):
-    global platforms
-    platforms = test
+def update_platforms(new_platforms, new_gems):
+    global platforms, gems
+    platforms = new_platforms
+    gems = new_gems
 
 def get_platforms():
     global platforms
     return platforms
+
+def get_gems():
+    global gems
+    return gems
 
 # def update_config(cofig="", data=[]):
 #     config_data.
