@@ -1,24 +1,22 @@
-import pgzrun # import da biblioteca pygame zero
+import pgzrun
 from platformer import *
 
 from config import *
 from objects import Player, Enemy, BigGem
 
 def load_scene(scene_name):
-    global background, platforms, gems
+    global background, platforms
     scene = scenes[scene_name]
     background = scene.get("background", [])
     platforms = scene["platforms"]
-    gems = scene.get("gems", [])
-
-    update_platforms(platforms, gems)
-
+    update_platforms(platforms)
     
 def load_objects(scene_name):
-    global player, enemies
+    global player, enemies, gems
     scene = scenes[scene_name]
     player = Player(*scene["player_start"])
     enemies = [Enemy(x, y) for x, y in scene.get("enemies", [])]
+    gems = [BigGem(x, y) for x, y in scene.get("gems", [])]
 
 def change_scene(new_scene):
     global current_scene
@@ -31,10 +29,9 @@ def player_reached_goal():
     return player.x > WIDTH
 
 current_scene = "level1scene0"  # Começo do level 1
-load_scene(current_scene)# Carrega a cena inicial4
+load_scene(current_scene) # Carrega a cena inicial
 load_objects(current_scene)
 
-big_gem = BigGem(player.x, player.y)
 
 
 def draw():
@@ -47,12 +44,14 @@ def draw():
     for platform in platforms:
         platform.draw()
 
-    if gems:
-        for gem in gems:
-            gem.draw()    
+    for gem in gems:
+        gem.draw()    
 
     for enemy in enemies:
         enemy.draw()
+
+    if player.alive:
+        player.draw() 
 
     # for collectable in collectables:
     #     collectable.draw()
@@ -60,34 +59,26 @@ def draw():
     # for obstacle in obstacles:
     #     obstacle.draw()
 
-    if player.alive:
-        player.draw()
-
-    if player.holding:
-        big_gem.draw()
-    
-
-    
     # game messages
-    if over:
-        screen.draw.text("Game Over", center=(WIDTH/2, HEIGHT/2))
+    # if over:
+    #     screen.draw.text("Game Over", center=(WIDTH/2, HEIGHT/2))
 
-    if win:
-        screen.draw.text("You won!", center=(WIDTH/2, HEIGHT/2))
+    # if win:
+    #     screen.draw.text("You won!", center=(WIDTH/2, HEIGHT/2))
 
 
 def update():
-    player.update()
+    player.update(gems)
     
     for enemy in enemies:
-        enemy.update(player)
+        enemy.update(player, gems)
+
+    for gem in gems:
+        gem.update(player)
 
     # Verificar troca de cena
     if player_reached_goal():
         change_scene("level1scene1")
-
-
-    big_gem.update(player)
 
 
 pgzrun.go()
