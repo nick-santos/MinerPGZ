@@ -28,13 +28,17 @@ def player_reached_goal():
     # Exemplo: verifica se o player alcançou o lado direito da tela
     return player.x > WIDTH
 
-current_scene = "level1scene0"  # Começo do level 1
+current_scene = "level1scene1"  # Começo do level 1
 load_scene(current_scene) # Carrega a cena inicial
 load_objects(current_scene)
 
 
 
 def draw():
+
+    while check_state() == 'pause': ## novo
+        return ## novo
+
     screen.clear()
    
     if background:
@@ -44,14 +48,18 @@ def draw():
     for platform in platforms:
         platform.draw()
 
+    if player.alive:
+        player.draw() 
+        
     for gem in gems:
         gem.draw()    
 
     for enemy in enemies:
         enemy.draw()
 
-    if player.alive:
-        player.draw() 
+    
+
+    
 
     # for collectable in collectables:
     #     collectable.draw()
@@ -68,6 +76,10 @@ def draw():
 
 
 def update():
+
+    while check_state() == 'pause': ## novo
+        return ## novo
+    
     player.update(gems)
     
     for enemy in enemies:

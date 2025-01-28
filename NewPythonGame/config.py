@@ -25,6 +25,7 @@ scenes = {
 }
 
 ## Game variables
+state = ''
 over = False
 win = False
 gravity = 1
@@ -40,6 +41,13 @@ def get_platforms():
     global platforms
     return platforms
 
+def check_state():
+    global state
+    return state
+
+def set_state(new_state):
+    global state
+    state = new_state
 
 # def update_config(cofig="", data=[]):
 #     config_data.

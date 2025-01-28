@@ -72,7 +72,7 @@ class Player():
 
 
     def update(self, gems):
-        #global over, win
+        global over, win
 
         # moves
         self.direction = 0
@@ -82,124 +82,74 @@ class Player():
         if keyboard.d:
             self.direction = 1
 
+        self.image.x += self.direction * self.velocity_x
+
         platforms = get_platforms() 
 
-        if self.holding:
+        ## X collision with platforms
+        if self.collidelist(platforms) != -1 and self.direction != 0:
+            object = platforms[self.collidelist(platforms)]
+            if self.direction > 0:  # Movendo-se para a direita
+                self.image.right = object.left
+            elif self.direction < 0:  # Movendo-se para a esquerda
+                self.image.left = object.right
         
-            self.image.x += self.direction * self.velocity_x
+        # gravity and jump
+        if keyboard.w and self.jumping == False:
+            self.velocity_y += self.jump_velocity
+            self.jumping = True
 
-            self.holding.image.x = self.image.x
-            self.holding.image.bottom = self.image.top
-            self.holding.direction = self.direction
+        self.y += self.velocity_y 
+        self.image.y = self.y  # Atualizar posição do Actor
 
-            ## X GEM 
-            if self.holding.collidelist(platforms) != -1 and self.holding.direction != 0:
-                # set_state('pause') ## novo 
-                object = platforms[self.holding.collidelist(platforms)]
-                if self.holding.direction > 0:  # Movendo para a direita
-                    print("L: G Direita")
-                    self.holding.image.right = object.left
-                    self.image.right = object.left
-                    #self.holding.direction = 0
-                elif self.holding.direction < 0:  # Movendo para a esquerda
-                    print("L: G Esquerda")
-                    self.holding.image.left = object.right
-                    self.image.left = object.right
-                    #self.holding.direction = 0
-                    
-            ## X collision with platforms
-            if self.collidelist(platforms) != -1 and self.direction != 0:
-                object = platforms[self.collidelist(platforms)]
-                if self.direction > 0:  # Movendo-se para a direita
-                    print("L: P Direita")
-                    self.image.right = object.left
-                elif self.direction < 0:  # Movendo-se para a esquerda
-                    print("L: P Esquerda")
-                    self.image.left = object.right
-     
-            # gravity and jump
-            if keyboard.w and self.jumping == False:
-                self.velocity_y += self.jump_velocity
-                self.jumping = True
-
-            self.y += self.velocity_y 
-            self.image.y = self.y  # Atualizar posição do Actor
-            self.holding.image.bottom = self.image.top
-
-            ## Y collision with platforms
-            if self.collidelist(platforms) != -1:
-                object = platforms[self.collidelist(platforms)]
-                # check if going down
-                if self.velocity_y > 0:
-                    #print("L: P Chão")
-                    self.jumping = False
-                    self.image.bottom = object.top
-                
-                self.velocity_y = 0
-
-            ## Y GEM
+        if self.holding:
             if self.holding.collidelist(platforms) != -1:
                 object = platforms[self.holding.collidelist(platforms)]
                 # check if going up
                 if self.velocity_y < 0:
-                    print("L: G Teto")
+                    #player.stop_velocity_y(self, object)
                     self.holding.image.top = object.bottom
                     self.image.top = self.holding.image.bottom
-    
+                
                 self.velocity_y = 0
 
-            self.velocity_y += gravity
-
-            self.holding.direction = self.direction
-            self.holding.x = self.holding.image.x
-            self.holding.y = self.holding.image.y
-            
-        else:
-
-            self.image.x += self.direction * self.velocity_x
-
-            ## X collision with platforms
-            if self.collidelist(platforms) != -1 and self.direction != 0:
-                object = platforms[self.collidelist(platforms)]
-                if self.direction > 0:  # Movendo-se para a direita
+            if self.holding.collidelist(platforms) != -1: 
+                object = platforms[self.holding.collidelist(platforms)]
+                
+                if self.direction > 0:  # Movendo para a direita
                     self.image.right = object.left
-                elif self.direction < 0:  # Movendo-se para a esquerda
+                    self.holding.image.right = object.left
+                    #player.stop_velocity_x(object)
+                elif self.direction < 0:  # Movendo para a esquerda
                     self.image.left = object.right
+                    self.holding.image.left = object.right
+
+        ## Y collision with platforms
+        if self.collidelist(platforms) != -1:
+            object = platforms[self.collidelist(platforms)]
+            # check if going down
+            if self.velocity_y > 0:
+                self.jumping = False
+                self.image.bottom = object.top
+            # check if going up
+            elif self.velocity_y < 0:
+                self.image.top = object.bottom
             
-            # gravity and jump
-            if keyboard.w and self.jumping == False:
-                self.velocity_y += self.jump_velocity
-                self.jumping = True
+            self.velocity_y = 0
 
-            self.y += self.velocity_y 
-            self.image.y = self.y  # Atualizar posição do Actor
+        # if self.collidelist(gems):
+        #     object = self.collidelist(gems)
+        #     # check if going down
+        #     if self.velocity_y > 0:
+        #         self.jumping = False
+        #         self.image.bottom = object.top
+        #     # check if going up
+        #     elif self.velocity_y < 0:
+        #         self.image.top = object.bottom
+            
+        #     self.velocity_y = 0
 
-            ## Y collision with platforms
-            if self.collidelist(platforms) != -1:
-                object = platforms[self.collidelist(platforms)]
-                # check if going down
-                if self.velocity_y > 0:
-                    self.jumping = False
-                    self.image.bottom = object.top
-                # check if going up
-                elif self.velocity_y < 0:
-                    self.image.top = object.bottom
-                
-                self.velocity_y = 0
-
-            # if self.collidelist(gems):
-            #     object = self.collidelist(gems)
-            #     # check if going down
-            #     if self.velocity_y > 0:
-            #         self.jumping = False
-            #         self.image.bottom = object.top
-            #     # check if going up
-            #     elif self.velocity_y < 0:
-            #         self.image.top = object.bottom
-                
-            #     self.velocity_y = 0
-
-            self.velocity_y += gravity 
+        self.velocity_y += gravity 
 
         ## Collision with gem blocks
         for gem in gems:
@@ -218,8 +168,10 @@ class Player():
                         self.image.bottom = object.top
                     self.velocity_y = 0
 
+
         if keyboard.f and self.holding:
             self.stop_holding(gems, None)
+
 
         self.y = self.image.y  
         self.x = self.image.x  
@@ -380,12 +332,12 @@ class BigGem():
 
         if self.being_held:
             
-            #self.direction = player.direction
+            self.direction = player.direction
             self.velocity_y = 0
 
-            #self.image.x = player.x
+            self.image.x = player.x
             #self.image.y = self.y   
-            #self.image.bottom = player.image.top      
+            self.image.bottom = player.image.top      
 
             ## Y collision with platforms
             # if self.collidelist(platforms) != -1:
@@ -456,8 +408,8 @@ class BigGem():
             
             #self.image.x = player.x
             
-            # self.x = self.image.x
-            # self.y = self.image.y
+            self.x = self.image.x
+            self.y = self.image.y
 
 
         else:
