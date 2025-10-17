@@ -93,16 +93,16 @@ class Player():
             self.holding.direction = self.direction
 
             ## X GEM 
-            if self.holding.collidelist(platforms) != -1 and self.holding.direction != 0:
+            if self.holding.collidelist(platforms) != -1:
                 # set_state('pause') ## novo 
                 object = platforms[self.holding.collidelist(platforms)]
                 if self.holding.direction > 0:  # Movendo para a direita
-                    print("L: G Direita")
+                    #print("L: G Direita")
                     self.holding.image.right = object.left
                     self.image.right = object.left
                     #self.holding.direction = 0
                 elif self.holding.direction < 0:  # Movendo para a esquerda
-                    print("L: G Esquerda")
+                    #print("L: G Esquerda")
                     self.holding.image.left = object.right
                     self.image.left = object.right
                     #self.holding.direction = 0
@@ -111,10 +111,10 @@ class Player():
             if self.collidelist(platforms) != -1 and self.direction != 0:
                 object = platforms[self.collidelist(platforms)]
                 if self.direction > 0:  # Movendo-se para a direita
-                    print("L: P Direita")
+                    # print("L: P Direita")
                     self.image.right = object.left
                 elif self.direction < 0:  # Movendo-se para a esquerda
-                    print("L: P Esquerda")
+                    # print("L: P Esquerda")
                     self.image.left = object.right
      
             # gravity and jump

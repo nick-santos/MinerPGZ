@@ -5,11 +5,12 @@ from config import *
 from objects import Player, Enemy, BigGem
 
 def load_scene(scene_name):
-    global background, platforms
+    global background, platforms, next_scene
     scene = scenes[scene_name]
     background = scene.get("background", [])
     platforms = scene["platforms"]
     update_platforms(platforms)
+    next_scene = scene.get("next_scene")
     
 def load_objects(scene_name):
     global player, enemies, gems
@@ -28,7 +29,7 @@ def player_reached_goal():
     # Exemplo: verifica se o player alcançou o lado direito da tela
     return player.x > WIDTH
 
-current_scene = "level1scene1"  # Começo do level 1
+current_scene = "level1scene0"  # Começo do level 1
 load_scene(current_scene) # Carrega a cena inicial
 load_objects(current_scene)
 
@@ -39,7 +40,7 @@ def draw():
     while check_state() == 'pause': ## novo
         return ## novo
 
-    screen.clear()
+    #screen.clear()
    
     if background:
         for tile in background:
@@ -90,7 +91,7 @@ def update():
 
     # Verificar troca de cena
     if player_reached_goal():
-        change_scene("level1scene1")
+        change_scene(next_scene)
 
 
 pgzrun.go()
