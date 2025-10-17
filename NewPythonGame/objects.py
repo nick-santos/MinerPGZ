@@ -224,6 +224,9 @@ class Player():
         self.y = self.image.y  
         self.x = self.image.x  
 
+
+#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#
+
 class Enemy():
 
     def __init__(self, x, y):
@@ -232,8 +235,8 @@ class Enemy():
         self.x = x
         self.y = y
         self.start_x = x  # Posição inicial no eixo X
-        self.patrol_range = 90  # Alcance do movimento de patrulha
-        self.speed = 2  # Velocidade de movimento
+        self.patrol_range = 100  # Alcance do movimento de patrulha
+        self.speed = 1  # Velocidade de movimento
         self.direction = 1  # Direção inicial (1 = direita, -1 = esquerda)
         self.wait_time = 1  # Tempo de espera entre as direções
         self.waiting = False  # Status de espera
@@ -339,6 +342,129 @@ class Enemy():
             if self.image.x >= self.start_x + self.patrol_range or self.image.x <= self.start_x:
                 self.waiting = True  # Entra no estado de espera
                 self.last_wait_time = time.time()  # Marca o tempo da espera
+
+
+#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#
+
+
+class LittleEnemy():
+
+    def __init__(self, x, y, range):
+        self.image = Actor('rectenemy_little')
+        self.image.bottomleft = ((x, y))
+        self.x = x
+        self.y = y
+        self.start_x = x  # Posição inicial no eixo X
+        self.patrol_range = range  # Alcance do movimento de patrulha
+        self.speed = 2  # Velocidade de movimento
+        self.direction = 1  # Direção inicial (1 = direita, -1 = esquerda)
+        self.wait_time = 0.3  # Tempo de espera entre as direções
+        self.waiting = False  # Status de espera
+        self.last_wait_time = 0  # Tempo da última espera
+        self.detection_radius = 70  # Raio de detecção do jogador
+        self.chasing = False  # Estado atual: False para patrulha, True para perseguição
+        self.patrolling = True
+        self.forcedwaiting = False
+
+
+        self.locked = True
+        self.totalgems = 1
+        self.currentgems = 0
+
+    def rect(self):
+        """Retorna o retângulo da gem como um objeto Rect."""
+        return Rect(self.x, self.y, self.image.width, self.image.height)
+
+    def draw(self):
+        """Delegar o método draw para o Actor interno."""
+        self.image.draw()
+
+
+    def update(self, player, gems):
+        """Atualiza o comportamento do inimigo."""
+        # Calcular a distância do jogador
+
+        self.x = self.image.x
+        self.y = self.image.y
+
+        distance_to_player = abs(self.image.x - player.image.x)
+
+        if self.currentgems == self.totalgems:
+            # ir dormir ou ficar em idle, algo que simbolize que ele abriu o caminho
+            return
+
+        # forced waiting state after interacting with player
+        if self.forcedwaiting == True: 
+            if time.time() - self.last_wait_time >= self.wait_time:
+                self.forcedwaiting = False  # Sai do estado de espera
+                self.direction *= -1  # Inverte a direção 
+            return  # Durante a espera, não se move
+        
+        for gem in gems: # if the enemy collides with the gem in his path
+            if self.rect().colliderect(gem.rect()):
+                gem.delete(gems)
+                self.currentgems += 1
+                print("Little Inimigo pegou a gema")
+                print(self.currentgems)
+
+        # Alternar para o estado de perseguição se o jogador estiver perto
+        if distance_to_player <= self.detection_radius and (player.y >= self.image.top and player.y <= self.image.bottom) and self.forcedwaiting == False:
+            self.chasing = True
+            self.patrolling = False
+        else: # go back to his patrol area before starting to patrol again
+            self.chasing = False
+            if self.image.x >= self.start_x + self.patrol_range:
+                self.image.x += -1 * self.speed
+            elif self.image.x <= self.start_x:
+                self.image.x += 1 * self.speed
+            else:
+                self.patrolling = True
+                
+
+        if self.chasing:
+            # Perseguir o jogador
+            if self.image.x < player.image.x:
+                self.image.x += self.speed
+            elif self.image.x > player.image.x:
+                self.image.x -= self.speed
+            
+            # if the player is close enough the enemy will interact with them. Attack or gem collecting
+            if self.image.left <= player.image.right + 10 and self.image.right >= player.image.left - 10:
+                if player.holding != None:
+                    player.stop_holding(gems, "enemy")
+                    #player.numofgems -= 1
+                    self.currentgems += 1
+                    print("Little Inimigo pegou a gema")
+                    print(self.currentgems)
+                else:
+                    print("ATTACK")
+                
+                # setting the enemy to forced waiting after interation
+                self.chasing = False
+                self.patrolling = True
+                self.forcedwaiting = True
+                self.last_wait_time = time.time()  # Marca o tempo da espera
+
+        elif self.patrolling:
+            # Patrulha normal
+            if self.waiting:
+                # Verifica se o tempo de espera acabou
+                if time.time() - self.last_wait_time >= self.wait_time:
+                    self.waiting = False  # Sai do estado de espera
+                    self.direction *= -1  # Inverte a direção
+                return  # Durante a espera, não se move
+            
+
+            # Movimento de patrulha
+            self.image.x += self.direction * self.speed
+
+            # Verifica os limites da patrulha
+            if self.image.x >= self.start_x + self.patrol_range or self.image.x <= self.start_x:
+                self.waiting = True  # Entra no estado de espera
+                self.last_wait_time = time.time()  # Marca o tempo da espera
+
+
+#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#
 
 class BigGem():
     

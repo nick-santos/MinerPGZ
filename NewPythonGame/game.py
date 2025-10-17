@@ -2,21 +2,23 @@ import pgzrun
 from platformer import *
 
 from config import *
-from objects import Player, Enemy, BigGem
+from objects import Player, Enemy, LittleEnemy, BigGem
 
 def load_scene(scene_name):
-    global background, platforms, next_scene
+    global background, platforms, east_scene, west_scene
     scene = scenes[scene_name]
     background = scene.get("background", [])
     platforms = scene["platforms"]
     update_platforms(platforms)
-    next_scene = scene.get("next_scene")
+    east_scene = scene.get("east_scene")
+    west_scene = scene.get("west_scene")
     
 def load_objects(scene_name):
-    global player, enemies, gems
+    global player, enemies, little_enemies, gems
     scene = scenes[scene_name]
     player = Player(*scene["player_start"])
     enemies = [Enemy(x, y) for x, y in scene.get("enemies", [])]
+    little_enemies = [LittleEnemy(x, y, range) for x, y, range in scene.get("little_enemies", [])]
     gems = [BigGem(x, y) for x, y in scene.get("gems", [])]
 
 def change_scene(new_scene):
@@ -25,11 +27,15 @@ def change_scene(new_scene):
     load_scene(current_scene)
     load_objects(current_scene)
 
-def player_reached_goal():
+def player_reached_east():
     # Exemplo: verifica se o player alcançou o lado direito da tela
     return player.x > WIDTH
 
-current_scene = "level1scene0"  # Começo do level 1
+def player_reached_west():
+    # Exemplo: verifica se o player alcançou o lado direito da tela
+    return player.x < 0
+
+current_scene = "level1scene4"  # Começo do level 1
 load_scene(current_scene) # Carrega a cena inicial
 load_objects(current_scene)
 
@@ -58,7 +64,8 @@ def draw():
     for enemy in enemies:
         enemy.draw()
 
-    
+    for little_enemy in little_enemies:
+        little_enemy.draw()
 
     
 
@@ -86,12 +93,18 @@ def update():
     for enemy in enemies:
         enemy.update(player, gems)
 
+    for little_enemy in little_enemies:
+        little_enemy.update(player, gems)
+
     for gem in gems:
         gem.update(player)
 
     # Verificar troca de cena
-    if player_reached_goal():
-        change_scene(next_scene)
+    if player_reached_east():
+        change_scene(east_scene)
+
+    if player_reached_west():
+        change_scene(west_scene)
 
 
 pgzrun.go()
