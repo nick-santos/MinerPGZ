@@ -229,19 +229,19 @@ class Player():
 
 class Enemy():
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, range):
         self.image = Actor('rectenemy')
         self.image.bottomleft = ((x, y))
         self.x = x
         self.y = y
         self.start_x = x  # Posição inicial no eixo X
-        self.patrol_range = 100  # Alcance do movimento de patrulha
-        self.speed = 1  # Velocidade de movimento
+        self.patrol_range = range  # Alcance do movimento de patrulha
+        self.speed = 1.5  # Velocidade de movimento
         self.direction = 1  # Direção inicial (1 = direita, -1 = esquerda)
         self.wait_time = 1  # Tempo de espera entre as direções
         self.waiting = False  # Status de espera
         self.last_wait_time = 0  # Tempo da última espera
-        self.detection_radius = 150  # Raio de detecção do jogador
+        self.detection_radius = 120  # Raio de detecção do jogador
         self.chasing = False  # Estado atual: False para patrulha, True para perseguição
         self.patrolling = True
         self.forcedwaiting = False

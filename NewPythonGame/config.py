@@ -46,8 +46,17 @@ scenes = {
         "gems": [(TILE_SIZE * 1, HEIGHT - (TILE_SIZE * 8)), (TILE_SIZE * 12, HEIGHT - (TILE_SIZE * 1)), (TILE_SIZE * 19, HEIGHT - (TILE_SIZE * 6))],
         "player_start": (TILE_SIZE * 1, HEIGHT - (TILE_SIZE * 2)),
         "little_enemies":[(TILE_SIZE * 3, HEIGHT - (TILE_SIZE * 6), 110), (TILE_SIZE * 11, HEIGHT - (TILE_SIZE * 11), 250)],
-        "east_scene": "level1scene4",
+        "east_scene": "level1scene5",
         "west_scene": "level1scene3"
+    },
+    "level1scene5": {
+        "background": build("map/1_005_Background.csv", TILE_SIZE),
+        "platforms": build("map/1_005_Platforms.csv", TILE_SIZE),
+        "gems": [(TILE_SIZE * 1, HEIGHT - (TILE_SIZE * 6)), (TILE_SIZE * 10, HEIGHT - (TILE_SIZE * 1)), (TILE_SIZE * 17, HEIGHT - (TILE_SIZE * 1)), (TILE_SIZE * 10, HEIGHT - (TILE_SIZE * 11))],
+        "player_start": (TILE_SIZE * 1, HEIGHT - (TILE_SIZE * 11)),
+        "enemies":[(TILE_SIZE * 15, HEIGHT - (TILE_SIZE * 10), 100)],
+        "east_scene": "level1scene5",
+        "west_scene": "level1scene4"
     }
 
     # "level1scene1": {

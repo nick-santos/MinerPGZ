@@ -17,7 +17,7 @@ def load_objects(scene_name):
     global player, enemies, little_enemies, gems
     scene = scenes[scene_name]
     player = Player(*scene["player_start"])
-    enemies = [Enemy(x, y) for x, y in scene.get("enemies", [])]
+    enemies = [Enemy(x, y, range) for x, y, range in scene.get("enemies", [])]
     little_enemies = [LittleEnemy(x, y, range) for x, y, range in scene.get("little_enemies", [])]
     gems = [BigGem(x, y) for x, y in scene.get("gems", [])]
 
@@ -35,7 +35,7 @@ def player_reached_west():
     # Exemplo: verifica se o player alcançou o lado direito da tela
     return player.x < 0
 
-current_scene = "level1scene4"  # Começo do level 1
+current_scene = "level1scene0"  # Começo do level 1
 load_scene(current_scene) # Carrega a cena inicial
 load_objects(current_scene)
 
