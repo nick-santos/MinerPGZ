@@ -4,6 +4,8 @@ from platformer import *
 from config import *
 from objects import Player, Enemy, LittleEnemy, BigGem
 
+is_going_back = False
+
 def load_scene(scene_name):
     global background, platforms, east_scene, west_scene
     scene = scenes[scene_name]
@@ -14,9 +16,12 @@ def load_scene(scene_name):
     west_scene = scene.get("west_scene")
     
 def load_objects(scene_name):
-    global player, enemies, little_enemies, gems
+    global player, enemies, little_enemies, gems, is_going_back
     scene = scenes[scene_name]
-    player = Player(*scene["player_start"])
+    if is_going_back:
+        player = Player(*scene["player_start_back"])
+    else:
+        player = Player(*scene["player_start"])
     enemies = [Enemy(x, y, range) for x, y, range in scene.get("enemies", [])]
     little_enemies = [LittleEnemy(x, y, range) for x, y, range in scene.get("little_enemies", [])]
     gems = [BigGem(x, y) for x, y in scene.get("gems", [])]
@@ -29,11 +34,17 @@ def change_scene(new_scene):
 
 def player_reached_east():
     # Exemplo: verifica se o player alcançou o lado direito da tela
-    return player.x > WIDTH
+    global is_going_back
+    if player.x > WIDTH:
+        is_going_back = False
+        return True
 
 def player_reached_west():
     # Exemplo: verifica se o player alcançou o lado direito da tela
-    return player.x < 0
+    global is_going_back
+    if player.x < 0:
+        is_going_back = True
+        return True
 
 current_scene = "level1scene0"  # Começo do level 1
 load_scene(current_scene) # Carrega a cena inicial
