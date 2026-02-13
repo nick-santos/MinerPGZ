@@ -98,6 +98,3 @@ def check_state():
 def set_state(new_state):
     global state
     state = new_state
-
-# def update_config(cofig="", data=[]):
-#     config_data.

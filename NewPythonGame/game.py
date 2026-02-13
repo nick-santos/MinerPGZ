@@ -33,29 +33,26 @@ def change_scene(new_scene):
     load_objects(current_scene)
 
 def player_reached_east():
-    # Exemplo: verifica se o player alcançou o lado direito da tela
+    # Verifies if the player reached the right side of the screen
     global is_going_back
     if player.x > WIDTH:
         is_going_back = False
         return True
 
 def player_reached_west():
-    # Exemplo: verifica se o player alcançou o lado direito da tela
+    # Verifies if the player reached the left side of the screen
     global is_going_back
     if player.x < 0:
         is_going_back = True
         return True
 
-current_scene = "level1scene0"  # Começo do level 1
-load_scene(current_scene) # Carrega a cena inicial
+current_scene = "level1scene0"  # Begins in Level 1 - Scene 0
+load_scene(current_scene) # Loads the current scene
 load_objects(current_scene)
 
 
 
 def draw():
-
-    while check_state() == 'pause': ## novo
-        return ## novo
 
     #screen.clear()
    
@@ -78,7 +75,6 @@ def draw():
     for little_enemy in little_enemies:
         little_enemy.draw()
 
-    
 
     # for collectable in collectables:
     #     collectable.draw()
@@ -96,9 +92,6 @@ def draw():
 
 def update():
 
-    while check_state() == 'pause': ## novo
-        return ## novo
-    
     player.update(gems)
     
     for enemy in enemies:
@@ -110,7 +103,7 @@ def update():
     for gem in gems:
         gem.update(player)
 
-    # Verificar troca de cena
+    # Verifies if change scene is needed
     if player_reached_east():
         change_scene(east_scene)
 
